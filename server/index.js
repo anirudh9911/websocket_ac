@@ -10,9 +10,19 @@ const server = app.listen(port, () => {
 
 const wss = new WebSocketServer({server});
 
-wss.on('connection', (ws) =>{
-    ws.on("message", (data)=>{
-        console.log("Data from client: %s", data);
-        ws.send("thanks buddy!")
-    })
-})
+wss.on('connection', (ws, req) => {
+    console.log("New client connected:", req.socket.remoteAddress);
+
+    ws.on("message", (data) => {
+        console.log("Message from client:", data.toString());
+        ws.send("thanks buddy!");
+    });
+
+    ws.on("close", () => {
+        console.log("Client disconnected");
+    });
+
+    ws.on("error", (err) => {
+        console.error("WebSocket error:", err);
+    });
+});
